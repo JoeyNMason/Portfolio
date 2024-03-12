@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;1,500&display=swap');
+
+body{
+    font-family: "Montserrat", sans-serif;
+    background-color: #ffffff;    
+    box-sizing: border-box;
+    margin: 1;
+    padding: 0;     
+}
+
+header{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 10%;
+}
+
+h1{
+    text-align: center;
+}
+
+
+
+.article-section {
+    display: flex;
+    border: 5px solid black;
+  }
+
+  
+  .h3 {
+    margin-left: 30px; /* Adjust margin as needed */
+  }
+  
+  .pfp-me{
+    width: 30%;
+
+  }
+  
+  .me_article {
+    display: flex;
+    box-sizing: border-box;
+    border: 2.5px solid black;
+    /* Position the box relatively inside the section */
+    position: relative;
+    /* Move the box to the right side of the section */
+    margin-bottom: auto;
+    /* Adjust the width of the box */
+    width: 70%; 
+    /* Add some padding to create space between the box and the section's border */
+    padding: 25px; 
+  }
+
+  .project-list{
+    
+    list-style: none;
+  }
