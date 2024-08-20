@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box; }
+
+:root{
+    --perspective: 800px; /* strength of 3d effect. lower value more pronounced higher value more subtle */
+    --perspective-origin: 50% 200px; /* controls position of viewers pov 1st value centers perspective horizontally 2nd value moves perspective down vertically this affects where the effect seems to originate from */
+    --scale: scale(0.8, 0.8); /* shrinks entire element and its content to 80% its OG size */
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: #000;
+}
+
+.container{
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+header{
+    color: #fff;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+}
+
+header h1{
+    margin: 0;
+    font-size: 100px;
+}
+
+header .sub-heading{
+    font-size: 24px;
+    margin: 0;
+}
+
+/* -----------------------------------CUBE STYLE----------------------------*/
+
+#wrapper{
+    padding-top: 10%;   
+}
+
+.viewport{
+    -webkit-perspective: var(--perspective);
+    -moz-perspective: var(--perspective);
+    -ms-perspective: var(--perspective);
+    -o-perspective: var(--perspective);
+    perspective: var(--perspective);
+    -webkit-perspective-origin: var(--perspective-origin);
+    -moz-perspective-origin: var(--perspective-origin);
+    -ms-perspective-origin: var(--perspective-origin);
+    -o-perspective-origin: var(--perspective-origin);
+    perspective-origin: var(--perspective-origin);
+    -webkit-transform: var(--scale);
+    -moz-transform: var(--scale);
+    -ms-transform: var(--scale);
+    -o-transform: var(--scale);
+    transform: var(--scale);
+    -webkit-box-reflect: below 170px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0%, transparent), to(rgba(250, 250, 250, 0.1))); /* adds reflection below the element creating a mirrored image underneath. */
+}
