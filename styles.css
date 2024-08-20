@@ -6,6 +6,8 @@
     box-sizing: border-box; }
 
 :root{
+    --cube-height: 200px;
+    --cube-width: 200px;
     --perspective: 800px; /* strength of 3d effect. lower value more pronounced higher value more subtle */
     --perspective-origin: 50% 200px; /* controls position of viewers pov 1st value centers perspective horizontally 2nd value moves perspective down vertically this affects where the effect seems to originate from */
     --scale: scale(0.8, 0.8); /* shrinks entire element and its content to 80% its OG size */
@@ -15,6 +17,12 @@
     --color-change: color 600ms; /* color transition by 600 milliseconds */
     --cube-text-color: #E0B0FF;
     --rotate-translate-X-Z: rotateX(90deg) translateZ(100px); /* X titled to lie flat flipping it back to front Z apear closer to viewer */
+    --translate-Z: translateZ(100px); /* moves element 100px forward along Z-axis */
+    --rotate-translate-Y-Z: rotateY(90deg) translateZ(100px); /* rotate element on Y and move on Z */
+    --rotate-translate-Y-Z-4th-face: rotateY(180deg) translateZ(100px);
+    --rotate-translate-Y-Z-5th-face: rotateY(-90deg) translateZ(100px);
+    --rotate-translate-X-Rotate-Z: rotateX(-90deg) rotate(180deg) translateZ(100px);
+    --media-query: scale(0.6, 0.6); /* shrinks element based on viewport size */
 } 
 
 body{
@@ -74,8 +82,8 @@ header .sub-heading{
 .cube{
     position: relative;
     margin: 0 auto;
-    height: 200px;
-    width: 200px;
+    height: var(--cube-height);
+    width: var(--cube-width);
     -webkit-transform-style: var(--preserve-3d);
     -moz-transform-style: var(--preserve-3d);
     -ms-transform-style: var(--preserve-3d);
@@ -92,8 +100,8 @@ header .sub-heading{
     overflow: hidden;
     position: absolute;
     opacity: 0.9;
-    height: 200px;
-    width: 200px;
+    height: var(--cube-height);
+    width: var(--cube-width);
     background-color: #fff;
     -webkit-touch-callout: none;
     -moz-touch-callout: none;
@@ -109,8 +117,8 @@ header .sub-heading{
 }
 
 .cube > div > div.cube.image{
-    width: 200px;
-    height: 200px;
+    height: var(--cube-height);
+    width: var(--cube-width);
     -webkit-transform: var(--image-rotate);
     -moz-transform: var(--image-rotate);
     -ms-transform: var(--image-rotate);
@@ -148,3 +156,66 @@ header .sub-heading{
     outline: 1px solid transparent;
 }
 
+.cube > div:nth-child(2){
+    /* looking for 2nd child div */
+    -webkit-transform: var(--translate-Z);
+    -moz-transform: var(--translate-Z);
+    -ms-transform: var(--translate-Z);
+    -o-transform: var(--translate-Z);
+    transform: var(--translate-Z);
+    outline: 1px solid transparent;
+}
+
+.cube > div:nth-child(3){
+    -webkit-transform: var(--rotate-translate-Y-Z);
+    -moz-transform: var(--rotate-translate-Y-Z);
+    -ms-transform: var(--rotate-translate-Y-Z);
+    -o-transform: var(--rotate-translate-Y-Z);
+    transform: var(--rotate-translate-Y-Z);
+    outline: 1px solid transparent;
+}
+
+.cube > div:nth-child(4){
+    -webkit-transform: var(--rotate-translate-Y-Z-4th-face);
+    -moz-transform: var(--rotate-translate-Y-Z-4th-face);
+    -ms-transform: var(--rotate-translate-Y-Z-4th-face);
+    -o-transform: var(--rotate-translate-Y-Z-4th-face);
+    transform: var(--rotate-translate-Y-Z-4th-face);
+    outline: 1px solid transparent;
+}
+
+.cube > div:nth-child(5){
+    -webkit-transform: var(--rotate-translate-Y-Z-5th-face);
+    -moz-transform: var(--rotate-translate-Y-Z-5th-face);
+    -ms-transform: var(--rotate-translate-Y-Z-5th-face);
+    -o-transform: var(--rotate-translate-Y-Z-5th-face);
+    transform: var(--rotate-translate-Y-Z-5th-face);
+    outline: 1px solid transparent;
+}
+
+.cube > div:nth-child(6){
+    -webkit-transform: var(--rotate-translate-X-Rotate-Z);
+    -moz-transform: var(--rotate-translate-X-Rotate-Z);
+    -ms-transform: var(--rotate-translate-X-Rotate-Z);
+    -o-transform: var(--rotate-translate-X-Rotate-Z);
+    transform: var(--rotate-translate-X-Rotate-Z);
+    outline: 1px solid transparent;
+}
+
+object{
+    opacity: 0.5;
+}
+
+object:hover{
+    opacity: 1;
+}
+
+@media(max-width: 640px){
+    .viewport{
+        -webkit-transform: var(--media-query);
+        -moz-transform: var(--media-query);
+        -ms-transform: var(--media-query);
+        -o-transform: var(--media-query);
+        transform: var(--media-query);
+    }
+}
