@@ -84,18 +84,71 @@ Events.prototype.once = function (name, fn){
 }
 
 Events.prototype.emit = function(name, args){
+    // emit method triggers or fires the event and call all functions associated with it 
+    // arguments passed to functions that handle this event
     var events = this.events[name];
     if (events){
         var i = events.length;
+        // gets number of functions in list
         while(i--){
+            // loops through each function in list
             if(events[i]){
+                // checks if func exists
                 events[i].call(this, args);
+                // calls func with arguements and sets the context to current obj
+                // this runs the func and gives it data provided
                 if(events[i].once){
+                    // checks if func is marked to run only once
                     delete events[i];
+                    // removes func if it is a once function
+                    // wont run again in future
                 }
             }
         }
     }
     return this;
+    // method chaining
+    // can be called multi times in row
 }
 
+Events.prototype.unbind = function(name, fn){
+    // unbind method 
+    // removes event handlers from event system
+    // event handlers need to be removed from name
+    // fn the function that needs to be removed
+    // if not provided removes all handlers from event
+    if(name){
+        // event name is provided
+        var events = this.events[name];
+        // retrieve list of functions 
+        if(events){
+            // checks if there are functions for this event
+            if(fn){
+                // checks if specific func is provided
+                var i = events.indexOf(fn);
+                // finds position of func in list
+                if(i != -1){
+                    // if found removes func
+                    delete events[i];
+                    // deletes func from list
+                }
+            } else{
+                delete this.events[name];
+                // if no spec func was provided remove all funcs by 
+                // deleting event from list
+            }
+        }
+    } else {
+        delete this.events;
+        this.events = {  };
+        // if no event name was provided
+        // deletes all events and resets list to empty obj
+    }
+    return this;
+    // method chaining 
+    // call unbind multi times
+}
+
+var userPrefix;
+// declares variable named userPrefix
+// store a value that is important for future code
