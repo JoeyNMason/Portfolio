@@ -331,7 +331,66 @@ Viewport.prototype.animate = function(){
             this.positionY += 360;
         }
 
-        
+        if(this.positionY > 90 && this.positionY < 270){
+            this.positionX -= this.torqueX;
+
+            if(!this.upsideDown) {
+                this.upsideDown = true;
+                this.emit('upsideDown', { upsideDown: this.upsideDown });
+            }
+        } else {
+
+            this.positionX += this.torqueX;
+
+            if(this.upsideDown) {
+                this.upsideDown = false;
+                this.emit('upsideDown', { upsideDown: this.upsideDown });
+            }
+        }
+
+        if(this.positionX > 360){
+            this.positionX -= 360;
+        } else if(this.positionX < 0){
+            this.positionX += 360;
+        }
+
+        if(!(this.positionY >= 46 && this.positionY <= 130) && !(this.positionY >= 220 && this.positionY <= 308)){
+            if(this.upsideDown){
+                if(this.positionX >= 42 && this.positionX <= 130){
+                    this.calculatedSide = 3;
+                } else if (this.positionX >= 131 && this.positionX <223){
+                    this.calculatedSide = 2;
+                } else if(this.positionX >= 224 && this.positionX <= 314){
+                    this.calculatedSide = 5;
+                } else {
+                    this.calculatedSide = 4;
+                }
+            } else {
+                if(this.positionX >= 42 && this.positionX <= 130){
+                    this.calculatedSide = 5;
+                } else if(this.positionX >= 131 && this.positionX <= 223){
+                    this.calculatedSide = 4;
+                } else if(this.positionX >= 224 && this.positionX <= 314){
+                    this.calculatedSide = 3;
+                } else {
+                    this.calculatedSide = 2;
+                }
+            }
+        } else {
+            if(this.positionY >= 46 && this.positionY <= 130){
+                this.calculatedSide = 6;
+            }
+
+            if(this.positionY >= 220 && this.positionY <= 308){
+                this.calculatedSide = 1;
+            }
+        }
+
+        if(this.calculatedSide !== this.currentSide) {
+            this.currentSide = this.calculatedSide;
+            this.emit('sideChange');
+        }
     }
 
+    /////////
 }
