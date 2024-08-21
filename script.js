@@ -152,3 +152,186 @@ Events.prototype.unbind = function(name, fn){
 var userPrefix;
 // declares variable named userPrefix
 // store a value that is important for future code
+
+// code is figuring out what browser is being used so 
+// correct css and js prefixes can be applied
+var prefix = (function () {
+    var styles = window.getComputedStyle(document.documentElement, ''),
+    // gets all css styles applied to root <html>
+    // stored in var styles
+        pre = (Array.prototype.slice
+            // looking for spec prefix used by browser
+            .call(styles)
+            // converting styles into array of strings 
+            .join('')
+            // joining all strings into one long string
+            .match(/-(moz|webkit|ms)-/) || (styles.Olink === '' && ['', 'o'])
+            // searching that string for prefix
+        )[1],
+        dom = ('Webkit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+        // looks for standard JS name that matches prefix in string
+    userPrefix = {
+        // creates obj that stores diff forms of prefix
+        dom: dom,
+        // the JS friendly ver of prefix
+        lowercase: pre,
+        // lower case ver of prefix
+        css: '-' + pre + '-',
+        // the css ver of prefix
+        js: pre[0].toUpperCase() + pre.substr(1)
+        // the JS ver
+    };
+})();
+// code is wrapped in a func that runs immediately
+
+// func makes sure that if something happens to html element the 
+// code will run regardless of which browser youre using
+// checks if element has event listener
+// if browser supports add event listener it attaches
+// if older browser it uses attachEvent in the else statement
+function bindEvent(element, type, handler){
+    if(element.addEventListener){
+        element.addEventListener(type, handler, false);
+        // when event type happens on this element run handler func
+        // false means event will bubble up 
+    } else {
+        element.attachEvent('on' + type, handler);
+    }
+}
+
+function Viewport(data){
+    // how cube reacts to mouse movement or touch on a screen
+    events.add(this);
+    // connects Viewport obj to event system to listen to trigger events
+
+    var self = this;
+    // makes sure that inside other funcs self always refers to this Viewport object
+
+    this.element = data.element;
+    // the html element that 3D obj is attached too
+    this.fps = data.fps;
+    this.sensivity = data.sensivity;
+    this.sensivityFade = data.sensivityFade;
+    this.touchSensivity = data.touchSensivity;
+    this.speed = data.speed;
+
+    this.lastX = 0;
+    this.lastY = 0;
+    this.mouseX = 0;
+    this.mouseY = 0;
+    this.distanceX = 0;
+    this.distanceY = 0;
+    this.positionX = 1122;
+    this.positionY = 136;
+    this.torqueX = 0;
+    this.torqueY = 0;
+
+    this.down = false;
+    this.upsideDown = false;
+
+    this.previousPositionX = 0;
+    this.previousPositionY = 0;
+
+    this.currentSide = 0;
+    this.calculatedSide = 0;
+
+    bindEvent(document, 'mousedown', function() {
+        self.down = true;
+    });
+    // listens for mouse button is down sets a flag (self.down)
+    // to true showing that mouse is currently pressed
+
+    bindEvent(document, 'mouseup', function () {
+        self.down = false;
+    });
+    // when mouse is released flag is set to false
+
+    bindEvent(document, 'keyup', function () {
+        self.down = false;
+    });
+    // when key is released flag is set to false
+
+    bindEvent(document, 'mousemove', function(e) {
+        self.mouseX = e.pageX;
+        self.mouseY = e.pageY;
+    });
+    // tracks current position of mouse as it moves on screen 
+    // stores X and Y cords
+
+    bindEvent(document, 'touchstart', function(e) {
+
+        self.down = true;
+        e.touches ? e = e.touches[0] : null;
+        self.mouseX = e.pageX / self.touchSensivity;
+        self.mouseY = e.pageY / self.touchSensivity;
+        self.lastX = self.mouseX;
+        self.lastY = self.mouseY;
+    });
+    // tracks if finger is pressed on screen
+    // tracks if finger is moving along screen
+    // tracks if finger is off the screen
+    // stores inside self.mouseX & Y
+
+    bindEvent(document, 'touchmove', function(e) {
+        if(e.preventDefault) {
+            e.preventDefault();
+        }
+
+        if(e.touches.length == 1){
+            e.touches ? e = e.touches[0] : null;
+
+            self.mouseX = e.pageX / self.touchSensivity;
+            self.mouseY = e.pageY / self.touchSensivity;
+        }
+    });
+    // tracks if finger is pressed on screen
+    // tracks if finger is moving along screen
+    // tracks if finger is off the screen
+    // stores inside self.mouseX & Y
+
+    bindEvent(document, 'touched', function(e) {
+        self.down = false;
+    });
+    // tracks if finger is pressed on screen
+    // tracks if finger is moving along screen
+    // tracks if finger is off the screen
+    // stores inside self.mouseX & Y
+
+    setInterval(this.animate.bind(this), this.fps);
+    // this line sets up reg update every few milliseconds to adjust
+    // pos and rot of 3d obj on screen based on latest mouse or touch
+    // inputs
+}
+
+events.implement(Viewport);
+Viewport.prototype.animate = function(){
+    
+    this.distanceX = (this.mouseX - this.lastX);
+    this.distanceY = (this.mouseY - this.lastY);
+
+    this.lastX = this.mouseX;
+    this.lastY = this.mouseY;
+
+    if(this.down){
+        this.torqueX = this.torqueX * this.sensivityFade + (this.distanceX * this.speed - this.torqueX) * this.sensivity;
+        this.torqueY = this.torqueY * this.sensivityFade + (this.distanceY * this.speed - this.torqueY) * this.sensivity;
+    }
+
+    if(Math.abs(this.torqueX) > 1.0 || Math.abs(this.torqueY) > 1.0) {
+        if(!this.down){
+            this.torqueX *= this.sensivityFade;
+            this.torqueY *= this.sensivityFade;
+        }
+
+        this.positionY -= this.torqueY;
+
+        if(this.positionY > 360){
+            this.positionY -= 360;
+        } else if(this.positionY < 0){
+            this.positionY += 360;
+        }
+
+        
+    }
+
+}
