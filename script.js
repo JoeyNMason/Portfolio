@@ -140,7 +140,7 @@ Events.prototype.unbind = function(name, fn){
         }
     } else {
         delete this.events;
-        this.events = {  };
+        this.events = { };
         // if no event name was provided
         // deletes all events and resets list to empty obj
     }
@@ -165,10 +165,10 @@ var prefix = (function () {
             // converting styles into array of strings 
             .join('')
             // joining all strings into one long string
-            .match(/-(moz|webkit|ms)-/) || (styles.Olink === '' && ['', 'o'])
+            .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
             // searching that string for prefix
         )[1],
-        dom = ('Webkit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+        dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
         // looks for standard JS name that matches prefix in string
     userPrefix = {
         // creates obj that stores diff forms of prefix
@@ -264,8 +264,8 @@ function Viewport(data){
         e.touches ? e = e.touches[0] : null;
         self.mouseX = e.pageX / self.touchSensivity;
         self.mouseY = e.pageY / self.touchSensivity;
-        self.lastX = self.mouseX;
-        self.lastY = self.mouseY;
+        self.lastX  = self.mouseX;
+        self.lastY  = self.mouseY;
     });
     // tracks if finger is pressed on screen
     // tracks if finger is moving along screen
@@ -358,7 +358,7 @@ Viewport.prototype.animate = function(){
             if(this.upsideDown){
                 if(this.positionX >= 42 && this.positionX <= 130){
                     this.calculatedSide = 3;
-                } else if (this.positionX >= 131 && this.positionX <223){
+                } else if (this.positionX >= 131 && this.positionX <= 223){
                     this.calculatedSide = 2;
                 } else if(this.positionX >= 224 && this.positionX <= 314){
                     this.calculatedSide = 5;
@@ -404,7 +404,7 @@ Viewport.prototype.animate = function(){
 
 var viewport = new Viewport({
     element: document.getElementsByClassName('cube')[0],
-    fps: 20,
+    fps: 5,
     sensivity: .1,
     sensivityFade: .93,
     speed: 2,
@@ -437,7 +437,8 @@ Cube.prototype.rotateSides = function(){
         this.sides[0].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + (viewport.positionX + viewport.torqueX) + 'deg)';
         this.sides[5].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + -(viewport.positionX + 180 + viewport.torqueX) + 'deg)';
     } else {
-        this.sides[0].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + (viewport.positionX + 180 - viewport.torqueX) + 'deg)';
+        this.sides[0].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + (viewport.positionX - viewport.torqueX) + 'deg)';
+    this.sides[5].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + -(viewport.positionX + 180 - viewport.torqueX) + 'deg)';
     }
 }
 
@@ -446,7 +447,7 @@ Cube.prototype.upsideDown = function(obj){
     var deg = (obj.upsideDown == true) ? '180deg' : '0deg';
     var i = 5;
 
-    while(i > 0 && --1) {
+    while(i > 0 && --i) {
         this.sides[i].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + deg + ')';
     }
 }
