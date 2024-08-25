@@ -465,3 +465,16 @@ new Cube({
     viewport: viewport,
     element: document.getElementsByClassName('cube')[0]
 });
+
+// ---------------------------clock-------------------------------
+
+const time = document.querySelector('.time');
+// time
+
+function showTime(){
+    let time = new Date();
+    time.innerText = time.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: true });
+    setTimeout(showTime, 1000);
+}
+
+showTime();
