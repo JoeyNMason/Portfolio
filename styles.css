@@ -33,6 +33,7 @@ body {
   background: #000;
   overflow: hidden;
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
 }
 
 .container{
@@ -54,6 +55,10 @@ nav{
   padding: 12px;
   margin:  15px;
   position: relative;
+}
+
+.time{
+  color: #fff;
 }
 
 /* ----SPINNING CUBE---- */
@@ -296,8 +301,8 @@ ul{
 
 @media (max-width: 768px) {
   .back-cube {
-      width: 25px;
-      height: 25px;
+      width: 20px;
+      height: 20px;
   }
 
   .face {
