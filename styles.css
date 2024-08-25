@@ -51,8 +51,8 @@ header{
 nav{
   display: flex;
   align-items: center;
-  padding: 20px;
-  margin: 20px;
+  padding: 12px;
+  margin:  15px;
   position: relative;
 }
 
@@ -296,8 +296,8 @@ ul{
 
 @media (max-width: 768px) {
   .back-cube {
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
   }
 
   .face {
@@ -307,8 +307,8 @@ ul{
 
 @media (max-width: 480px) {
   .back-cube {
-      width: 20px;
-      height: 20px;
+      width: 15px;
+      height: 15px;
   }
 
   .face {
