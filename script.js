@@ -468,13 +468,16 @@ new Cube({
 
 // ---------------------------clock-------------------------------
 
-const time = document.querySelector('.time');
-// time
+const timeElement = document.querySelector('.time');
 
-function showTime(){
-    let time = new Date();
-    time.innerText = time.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: true });
-    setTimeout(showTime, 1000);
+function showTime() {
+    let currentTime = new Date(); 
+    timeElement.innerText = currentTime.toLocaleTimeString("en-GB", { 
+        hour: "2-digit", 
+        minute: "2-digit", 
+        hour12: true 
+    });
+    setTimeout(showTime, 1000); 
 }
 
 showTime();
