@@ -47,6 +47,8 @@ body {
 
 header{
   width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 nav{
@@ -58,8 +60,12 @@ nav{
 }
 
 .time{
-  color: #fff;
+    color: #fff;
+    padding: 8px;
+    position: relative;
 }
+
+
 
 /* ----SPINNING CUBE---- */
 
