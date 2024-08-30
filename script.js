@@ -306,34 +306,45 @@ function Viewport(data){
 events.implement(Viewport);
 Viewport.prototype.animate = function(){
     
+    // calculate how much the mouse has moved since last frame
     this.distanceX = (this.mouseX - this.lastX);
     this.distanceY = (this.mouseY - this.lastY);
 
+    // update last known mouse position
     this.lastX = this.mouseX;
     this.lastY = this.mouseY;
 
+    // if the mouse is being held down
     if(this.down){
+        // adjust the rotatation speed based on how fast the mouse is moving
         this.torqueX = this.torqueX * this.sensivityFade + (this.distanceX * this.speed - this.torqueX) * this.sensivity;
         this.torqueY = this.torqueY * this.sensivityFade + (this.distanceY * this.speed - this.torqueY) * this.sensivity;
     }
 
+    // if the rotation is signif enough more then 1deg in any direction
     if(Math.abs(this.torqueX) > 1.0 || Math.abs(this.torqueY) > 1.0) {
+        // if the mouse is not held down slowly reduce the rotation speed 
         if(!this.down){
             this.torqueX *= this.sensivityFade;
             this.torqueY *= this.sensivityFade;
         }
 
+        //  update the vert rotation 
         this.positionY -= this.torqueY;
 
+        // ensure the rotation stays within 0-360deg range
         if(this.positionY > 360){
             this.positionY -= 360;
         } else if(this.positionY < 0){
             this.positionY += 360;
         }
 
+        // depending on the vert rotation adjust the hori rotation
+        // this determines whether the element should rotate left or right or be flipped upside down
         if(this.positionY > 90 && this.positionY < 270){
             this.positionX -= this.torqueX;
 
+            // if the element is now upside down emit event to notif the system 
             if(!this.upsideDown) {
                 this.upsideDown = true;
                 this.emit('upsideDown', { upsideDown: this.upsideDown });
@@ -342,19 +353,23 @@ Viewport.prototype.animate = function(){
 
             this.positionX += this.torqueX;
 
+            // if element is no longer upside down emit an event to notify the system
             if(this.upsideDown) {
                 this.upsideDown = false;
                 this.emit('upsideDown', { upsideDown: this.upsideDown });
             }
         }
 
+        // ensure the rotate stays within the 0-360deg range
         if(this.positionX > 360){
             this.positionX -= 360;
         } else if(this.positionX < 0){
             this.positionX += 360;
         }
 
+        // determine which side of element is currently facing the user based on its rotation 
         if(!(this.positionY >= 46 && this.positionY <= 130) && !(this.positionY >= 220 && this.positionY <= 308)){
+            // if element is upside down the sides are reversed
             if(this.upsideDown){
                 if(this.positionX >= 42 && this.positionX <= 130){
                     this.calculatedSide = 3;
@@ -366,6 +381,7 @@ Viewport.prototype.animate = function(){
                     this.calculatedSide = 4;
                 }
             } else {
+                // else calc the side normally 
                 if(this.positionX >= 42 && this.positionX <= 130){
                     this.calculatedSide = 5;
                 } else if(this.positionX >= 131 && this.positionX <= 223){
@@ -377,6 +393,7 @@ Viewport.prototype.animate = function(){
                 }
             }
         } else {
+            // if element is tilted more up or down the top or bottom sides are showing 
             if(this.positionY >= 46 && this.positionY <= 130){
                 this.calculatedSide = 6;
             }
@@ -385,15 +402,18 @@ Viewport.prototype.animate = function(){
                 this.calculatedSide = 1;
             }
         }
-
+        
+        // if the currently displayed side has change emit event to notif system
         if(this.calculatedSide !== this.currentSide) {
             this.currentSide = this.calculatedSide;
             this.emit('sideChange');
         }
     }
 
+    // apply calc rotation to element CSS
     this.element.style[userPrefix.js + 'Transform'] = 'rotateX(' + this.positionY + 'deg) rotateY(' + this.positionX + 'deg)';
 
+    // if position has changed since last frame emit a rotate event
     if(this.positionY != this.previousPositionY || this.positionX != this.previousPositionX) {
         this.previousPositionY = this.positionY;
         this.previousPositionX = this.positionX;
@@ -404,7 +424,7 @@ Viewport.prototype.animate = function(){
 
 var viewport = new Viewport({
     element: document.getElementsByClassName('cube')[0],
-    fps: 5,
+    fps: 20,
     sensivity: .1,
     sensivityFade: .93,
     speed: 2,
@@ -414,56 +434,77 @@ var viewport = new Viewport({
 function Cube(data){
     var self = this;
 
-    this.element = data.element;
-    this.sides = this.element.getElementsByClassName('side');
+    // stores cube element and its sides 
+    this.element = data.element; // refer to html element that reps the cube
+    this.sides = this.element.getElementsByClassName('side'); // gets all the elements with the class of side inside the cube
 
+    // ref the viewport obj which control the cube rotation etc
     this.viewport = data.viewport;
+    // event listeners on viewport for when certain actions occur
+    // when cube rotates call rotateSides method
     this.viewport.on('rotate', function() {
         self.rotateSides();
     });
     
+    // when cube flips upside down call method
     this.viewport.on('upsideDown', function(obj) {
         self.upsideDown(obj);
     });
 
+    // whne visible cube side changes call method
     this.viewport.on('sideChange', function() {
         self.sideChange();
     });
 }
 
+// define a method on cube proto to rotate sides of cube 
 Cube.prototype.rotateSides = function(){
-    var viewport = this.viewport;
+    var viewport = this.viewport; // get a refer to viewport obj controlling cube 
+
+    // check if cube is upside down based on vert position Y axis 
     if(viewport.positionY > 90 && viewport.positionY < 270){
+        // rotate front side based on hori posi and torque
         this.sides[0].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + (viewport.positionX + viewport.torqueX) + 'deg)';
+        // rotate back face in oppo direction 
         this.sides[5].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + -(viewport.positionX + 180 + viewport.torqueX) + 'deg)';
     } else {
+        // if cube is not upside down rotate based on posi and torque
         this.sides[0].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + (viewport.positionX - viewport.torqueX) + 'deg)';
-    this.sides[5].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + -(viewport.positionX + 180 - viewport.torqueX) + 'deg)';
+        // rotate back face similarly
+        this.sides[5].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + -(viewport.positionX + 180 - viewport.torqueX) + 'deg)';
     }
 }
 
+// define method on cube flipping upside down
 Cube.prototype.upsideDown = function(obj){
 
+    // determine the rotate if cube is upside down or not 
     var deg = (obj.upsideDown == true) ? '180deg' : '0deg';
-    var i = 5;
+    var i = 5; // start with side 5 work downwards
 
+    // loop through sides except front and back and apply rotation 
     while(i > 0 && --i) {
         this.sides[i].getElementsByClassName('cube-image')[0].style[userPrefix.js + 'Transform'] = 'rotate(' + deg + ')';
     }
 }
 
+// define method on cube proto to handle changes in active side of cube
 Cube.prototype.sideChange = function(){
     
+    // loop through all cube sides
     for(var i = 0; i < this.sides.length; ++i) {
+        // reset class of each sides image to default
         this.sides[i].getElementsByClassName('cube-image')[0].className = 'cube-image';
     }
 
+    // set class of current active side to cube-image-active
     this.sides[this.viewport.currentSide - 1].getElementsByClassName('cube-image')[0].className = 'cube-image active';
 }
 
+// create new instance of cube passing in viewport and cube element
 new Cube({
-    viewport: viewport,
-    element: document.getElementsByClassName('cube')[0]
+    viewport: viewport, // link the cube instance to the existing viewport instance
+    element: document.getElementsByClassName('cube')[0] // specify html element repre the cube
 });
 
 // ---------------------------clock-------------------------------
